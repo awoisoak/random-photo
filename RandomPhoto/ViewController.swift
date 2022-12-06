@@ -12,15 +12,16 @@ class ViewController: UIViewController {
     private let imageView: UIImageView = {
        let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
-        imageView.backgroundColor = .white
+        imageView.backgroundColor = .black
         return imageView
     }()
     
     private let button: UIButton = {
-       let button = UIButton()
-        button.backgroundColor = .white
+        let button = UIButton(type: .system)
+        button.backgroundColor = .systemCyan
         button.setTitle("Random Photo", for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.layer.borderWidth = 1
         return button
     }()
     
@@ -48,9 +49,9 @@ class ViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         button.frame = CGRect(
-            x: 20,
+            x: 80,
             y: view.frame.size.height-50-view.safeAreaInsets.bottom,
-            width: view.frame.size.width-40,
+            width: view.frame.size.width-160,
             height: 50
         )
     }
@@ -68,10 +69,23 @@ class ViewController: UIViewController {
         ]
         let urlString = array.randomElement()!
         let url = URL(string: urlString)!
-        guard let data = try? Data(contentsOf: url) else {
-            return
+        downloadPhoto(url: url)
+    }
+    
+    
+    func downloadPhoto(url:URL) {
+        // Create Data Task
+        let dataTask = URLSession.shared.dataTask(with: url) { [weak self] (data, _, _) in
+            if let data = data {
+                DispatchQueue.main.async {
+                    // Create Image and Update Image View
+                    self?.imageView.image = UIImage(data: data)
+                }
+            }
         }
-        imageView.image = UIImage(data: data)
+
+        // Start Data Task
+        dataTask.resume()
     }
 }
 
