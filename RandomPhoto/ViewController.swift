@@ -2,18 +2,76 @@
 //  ViewController.swift
 //  RandomPhoto
 //
-//  Created by awo on 6/12/22.
+//  Created by awoisoak on 6/12/22.
 //
 
 import UIKit
 
 class ViewController: UIViewController {
-
+    
+    private let imageView: UIImageView = {
+       let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        imageView.backgroundColor = .white
+        return imageView
+    }()
+    
+    private let button: UIButton = {
+       let button = UIButton()
+        button.backgroundColor = .white
+        button.setTitle("Random Photo", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        view.backgroundColor = .systemCyan
+        
+        view.addSubview(imageView)
+        imageView.frame = CGRect(
+            x: 0,
+            y: 0,
+            width: view.frame.size.width,
+            height: view.frame.size.height
+        )
+        imageView.center = view.center
+        
+        view.addSubview(button)
+        getRandomPhoto()
+        button.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
+    }
+    
+    @objc func didTapButton(){
+        getRandomPhoto()
+    }
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        button.frame = CGRect(
+            x: 20,
+            y: view.frame.size.height-50-view.safeAreaInsets.bottom,
+            width: view.frame.size.width-40,
+            height: 50
+        )
     }
 
-
+    
+    func getRandomPhoto(){
+        let array = [
+            "https://awoisoak.com/wp-content/uploads/2022/05/dsc07127-447.jpg",
+            "https://awoisoak.com/wp-content/uploads/2021/03/pano0001-pano-edit-3.jpg",
+            "https://awoisoak.com/wp-content/uploads/2022/07/dsc08840-518-520.jpg",
+            "https://awoisoak.com/wp-content/uploads/2019/12/dsc07507-137-23.jpg",
+            "https://awoisoak.com/wp-content/uploads/2019/08/tokyo-roof-6.jpg",
+            "https://awoisoak.com/wp-content/uploads/2020/04/hozujan-risshaku-temple-10.jpg",
+            "http://awoisoak.com/wp-content/uploads/2018/01/dsc09066_lzn.jpg"
+        ]
+        let urlString = array.randomElement()!
+        let url = URL(string: urlString)!
+        guard let data = try? Data(contentsOf: url) else {
+            return
+        }
+        imageView.image = UIImage(data: data)
+    }
 }
 
